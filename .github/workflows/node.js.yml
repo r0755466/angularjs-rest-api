@@ -11,7 +11,6 @@ on:
 
 jobs:
   build:
-    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -27,8 +26,8 @@ jobs:
 
       # Cache node_modules
       - name: Cache node modules
-        uses: actions/cache@v3  # Correct action for caching
-        with:
+        uses: actions/cache@v3
+        with: 
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
           restore-keys: |
@@ -38,32 +37,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # Build the project
+      # Build the client (if applicable)
       - name: Build Client
         run: npm run client-install
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      # Set up Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      # Install dependencies
-      - name: Install Dependencies
-        run: npm install
-
-      # Start the server (Optional: Only if you want to deploy directly)
-      - name: Start Server
-        run: npm start
 
   update_dependencies:
     runs-on: ubuntu-latest
@@ -89,4 +65,4 @@ jobs:
           git commit -m "Automated dependency updates" || echo "No changes to commit"
           git push origin master
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}  # Use your GitHub token for authentication
