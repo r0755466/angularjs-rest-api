@@ -1,0 +1,16 @@
+datasource db {
+    provider = "postgresql" // We can use Azure to test 
+    url      = env("DATABASE_URL") // Ensure you have this in your .env file
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Task {
+    id        Int      @id @default(autoincrement())
+    task      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+

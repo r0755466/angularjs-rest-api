@@ -1,24 +1,41 @@
-const express = require('express');  // Importing the Express framework
-const bodyParser = require('body-parser'); // Middleware for parsing JSON bodies
-const cors = require('cors'); // Middleware for enabling CORS
-const path = require('path'); // Utility for working with file and directory paths
+const express = require('express');
+const { PrismaClient } = require('@prisma/client');
+const cors = require('cors');
 
-const app = express(); // Create an Express application
-const port = process.env.PORT || 3000; // Define the port, using 3000 if not set in the environment
+const app = express();
+const prisma = new PrismaClient();
 
-// Middleware
-app.use(bodyParser.json()); // Parse incoming JSON requests
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(cors());
+app.use(express.json());
 
-// Serve static files from the AngularJS app
-app.use(express.static(path.join(__dirname, 'client'))); // Serve files in the 'client' directory
-
-// Fallback route to serve the index.html file for all other routes
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client', 'index.html')); // Send index.html for any route not defined
+app.get('/get_tasks', async (req, res) => {
+    try {
+        const tasks = await prisma.task.findMany(); // Assuming you have a Task model
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch tasks' });
+    }
 });
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`); // Log the server status
+
+app.post('/delete_tasks', async (req, res) => {
+    const { id } = req.body;
+    try {
+        await prisma.task.delete({
+            where: { id: Number(id) }, // Ensure the ID is a number
+        });
+        res.sendStatus(204); // No content to send back
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete task' });
+    }
 });
+
+// we want to start the server 
+const PORT  = 5000; 
+
+app.listen(PORT, () => {
+console.log('Server is running on the http://localhost${PORT}');
+}); 
+
+
+

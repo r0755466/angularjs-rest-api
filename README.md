@@ -1,4 +1,4 @@
-# Angular JavaScript Front End with .NET Core Backend and CI/CD Pipeline
+# Angular JavaScript Front End with Prisma database Backend and CI/CD Pipeline
 
 This project outlines the process of setting up a **JavaScript-based Angular** front end with a **.NET Core backend**, including setting up CI/CD pipelines using **GitHub Actions**.
 
@@ -34,6 +34,7 @@ We are writing the frontend code in **JavaScript** instead of TypeScript. Hence,
 4. Install the needed dependencies
   ```bash
   npm install body-parser@^1.19.0 cors@^2.8.5 dotenv@^16.4.5 express@^4.17.1 path@^0.12.7 --save-dev nodemon@^2.0.7
+  npm install prisma @prisma/client
   ```
 
  ```bash
@@ -170,32 +171,52 @@ jobs:
       - name: Build Angular app
         run: npm run build --prod
 
-  update_dependencies:
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v2
+```
 
-      # Install Renovate CLI
-      - name: Install Renovate
-        run: npm install -g renovate
 
-      # Run Renovate to update dependencies
-      - name: Update Dependencies
-        run: renovate
+# Primsa database configuration 
 
-      # Optionally, commit and push changes made by Renovate
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "r0755466"
-          git config --global user.email "rayan.azzi98@gmail.com"
-          git add .
-          git commit -m "Automated dependency updates"
-          git push origin master
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+1. We add the scheme 
+
+```prisma
+    datasource db {
+    provider = "postgresql" // We can use Azure to test 
+    url      = env("DATABASE_URL") // Ensure you have this in your .env file
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Task {
+    id        Int      @id @default(autoincrement())
+    task      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
 
 ```
 
+2. We add the Prisma scheme:
+    We generate the table: 
+```bash
+    npx prisma generate
+```
+
+3. Using psql to test it
+
+```bash
+psql -U postgres
+CREATE DATABASE mydatabase;
+
+CREATE USER myuser WITH PASSWORD 'mypassword';
+GRANT ALL PRIVILEGES ON DATABASE mydatabase TO myuser;
+```
+![alt text](image.png)
+
+# Doktorize the project 
+
+# Debug commadns used
+
+ curl -X POST http://localhost:5000/add_tasks -H "Content-Type: application/json" -d '{"task": "My new task"}'
 
