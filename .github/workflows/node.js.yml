@@ -54,10 +54,14 @@ jobs:
           curl -H "Authorization: token ${{ secrets.TOKEN }}" https://api.github.com/user
 
       # Install Renovate
+
+      # Debugging the token presence (Don't print the actual token value)
+      - name: Check if GITHUB_TOKEN is available
+        run: echo "Token is set"
+        if: ${{ secrets.TOKEN != '' }}
+
       - name: Install Renovate
-        run: |
-          echo "Environment Variables:"
-          env
+        run: 
           npm install -g renovate
 
       # Run Renovate to update dependencies
@@ -73,6 +77,6 @@ jobs:
           git commit -m "Automated dependency updates" || echo "No changes to commit"
           git push origin master
         env:
-          GITHUB_TOKEN: ${{ variables.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         
       # 
