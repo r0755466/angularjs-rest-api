@@ -50,9 +50,13 @@ jobs:
 
       # Install Renovate
       - name: Install Renovate
-        run: npm install -g renovate
-        # debug if there is any problem 
-        run: env
+        run: 
+      # debug if there is any problem 
+        |
+        env
+        npm install -g renovate
+    
+      
 
       # Run Renovate to update dependencies
       - name: Update Dependencies
