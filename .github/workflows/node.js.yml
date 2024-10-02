@@ -49,11 +49,11 @@ jobs:
         uses: actions/checkout@v2
 
       # Install Renovate
-      - name: Install Renovate
+       - name: Install Renovate
         run: |
-        echo "Environment Variables:"
-        env
-        npm install -g renovate
+          echo "Environment Variables:"
+          env
+          npm install -g renovate
     
       # Run Renovate to update dependencies
       - name: Update Dependencies
