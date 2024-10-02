@@ -23,14 +23,25 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
+      
+      # Cache node_modules 
+      - name: Cashe node modules 
+        uses: actions/cashe@v2 
+        with: 
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
 
       # Install dependencies
       - name: Install Dependencies
-        run: npm install
+        run:  |
+          npm install
+          cd client && npm install
 
       # Run tests
       - name: Run Tests
-        run: npm test -- --watch=false
+        run: cd client && npm test -- --watch=false
 
   build:
     needs: test
@@ -47,13 +58,25 @@ jobs:
         with:
           node-version: '16'
 
+      # We gone Cashe node_moldues
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       # Install dependencies
       - name: Install Dependencies
-        run: npm install
+        run:  |
+          npm install
+          cd client && npm install
 
       # Build the project
       - name: Build Angular app
         run: npm run build --prod
+      
 
   update_dependencies:
     runs-on: ubuntu-latest
