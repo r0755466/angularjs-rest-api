@@ -38,6 +38,8 @@ jobs:
         run:  |
           npm install
           cd client && npm install
+          cd client && npm install @angular/cli --save-dev  # Ensure Angular CLI is installed
+
 
       # Run tests
       - name: Run Tests
