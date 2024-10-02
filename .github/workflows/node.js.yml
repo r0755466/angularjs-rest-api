@@ -59,14 +59,8 @@ jobs:
           fi
 
       # Install Renovate
-
-      # Debugging the token presence (Don't print the actual token value)
-      - name: Check if GITHUB_TOKEN is available
-        run: echo "Token is set"
-        if: ${{ secrets.TOKEN != '' }}
-
       - name: Install Renovate
-        run: 
+        run: |
           npm install -g renovate
 
       # Run Renovate to update dependencies
@@ -78,10 +72,9 @@ jobs:
         run: |
           git config --global user.name "R0755466"
           git config --global user.email "rayan.azzi98@gmail.com"
+          git remote set-url origin https://x-access-token:${{ secrets.TOKEN }}@github.com/${{ github.repository }}.git
           git add .
           git commit -m "Automated dependency updates" || echo "No changes to commit"
           git push origin master
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        
-      # 
