@@ -50,14 +50,11 @@ jobs:
 
       # Install Renovate
       - name: Install Renovate
-        run: 
-      # debug if there is any problem 
-        |
+        run: |
+        echo "Environment Variables:"
         env
         npm install -g renovate
     
-      
-
       # Run Renovate to update dependencies
       - name: Update Dependencies
         run: renovate
