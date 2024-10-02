@@ -114,37 +114,87 @@ For the task management feature, you should have a backend API that handles the 
 2. Configure the .github/workflows/ci.yml file
 
 ```bash
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Run tests
+      - name: Run Tests
+        run: npm test -- --watch=false
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Build the project
+      - name: Build Angular app
+        run: npm run build --prod
+
+  update_dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Install Renovate CLI
+      - name: Install Renovate
+        run: npm install -g renovate
+
+      # Run Renovate to update dependencies
+      - name: Update Dependencies
+        run: renovate
+
+      # Optionally, commit and push changes made by Renovate
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "r0755466"
+          git config --global user.email "rayan.azzi98@gmail.com"
+          git add .
+          git commit -m "Automated dependency updates"
+          git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
 ```
 
