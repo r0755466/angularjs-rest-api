@@ -65,4 +65,4 @@ jobs:
           git commit -m "Automated dependency updates" || echo "No changes to commit"
           git push origin master
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}  # Use your GitHub token for authentication
+          GITHUB_TOKEN: ${{secrets.TOKEN}} 
