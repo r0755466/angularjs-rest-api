@@ -93,9 +93,13 @@ For the task management feature, you should have a backend API that handles the 
    ```
 3. Commit changes
    ```bash
-   git commit -m "First configuration"
+   git commit -m "init files"
    ```
-4. push changes 
+4. Add origin
+    ```bash
+    git remote add origin https://github.com/r0755466/angularjs-rest-api.git
+    ```
+5. push changes 
    ```bash
    git push -u origin master
    ```
@@ -110,51 +114,38 @@ For the task management feature, you should have a backend API that handles the 
 2. Configure the .github/workflows/ci.yml file
 
 ```bash
-name: CI/CD Pipeline
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
   pull_request:
-    branches:
-      - master
+    branches: [ "master" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
 
-      # Set up Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      # Install dependencies
-      - name: Install Dependencies
-        run: npm install
-
-      # Build the project
-      - name: Build Angular app
-        run: npm run build --prod
-
-      # Optional: Run tests (if you have any)
-      - name: Run Tests
-        run: npm run test -- --watch=false --browsers=ChromeHeadless
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Deploy to Git
 ```
 
 
