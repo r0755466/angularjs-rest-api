@@ -51,6 +51,8 @@ jobs:
       # Install Renovate
       - name: Install Renovate
         run: npm install -g renovate
+        # debug if there is any problem 
+        run: env
 
       # Run Renovate to update dependencies
       - name: Update Dependencies
@@ -65,4 +67,4 @@ jobs:
           git commit -m "Automated dependency updates" || echo "No changes to commit"
           git push origin master
         env:
-          GITHUB_TOKEN: ${{secrets.TOKEN}} 
+          GITHUB_TOKEN: ${{ secrets.TOKEN }} 
