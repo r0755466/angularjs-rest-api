@@ -24,9 +24,9 @@ jobs:
         with:
           node-version: '16'
       
-      # Cache node_modules 
-      - name: Cashe node modules 
-        uses: actions/cashe@v2 
+      # Cache node_modules
+      - name: Cache node modules
+        uses: actions/cache@v3  # Correct action for caching
         with: 
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
@@ -58,9 +58,9 @@ jobs:
         with:
           node-version: '16'
 
-      # We gone Cashe node_moldues
+      # Cache node_modules
       - name: Cache node modules
-        uses: actions/cache@v3
+        uses: actions/cache@v3  # Correct action for caching
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
@@ -75,8 +75,7 @@ jobs:
 
       # Build the project
       - name: Build Angular app
-        run: npm run build --prod
-      
+        run: cd client && npm run client-build --prod  # Command to build client
 
   update_dependencies:
     runs-on: ubuntu-latest
@@ -99,7 +98,7 @@ jobs:
           git config --global user.name "r0755466"
           git config --global user.email "rayan.azzi98@gmail.com"
           git add .
-          git commit -m "Automated dependency updates"
+          git commit -m "Automated dependency updates" || echo "No changes to commit"
           git push origin master
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
