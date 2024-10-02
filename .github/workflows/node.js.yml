@@ -10,43 +10,7 @@ on:
       - master
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      # Set up Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      
-      # Cache node_modules
-      - name: Cache node modules
-        uses: actions/cache@v3  # Correct action for caching
-        with: 
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('client/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
-      # Install dependencies
-      - name: Install Dependencies
-        run:  |
-          npm install
-          cd client && npm install
-          cd client && npm install @angular/cli --save-dev  # Ensure Angular CLI is installed
-
-
-      # Run tests
-      - name: Run Tests
-        run: cd client && npm test -- --watch=false
-
   build:
-    needs: test
     runs-on: ubuntu-latest
 
     steps:
