@@ -48,6 +48,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Check first 
+      Check GITHUB_TOKEN
+      - name: Check GITHUB_TOKEN
+        run: |
+          curl -H "Authorization: token ${{ secrets.TOKEN }}" https://api.github.com/user
+
       # Install Renovate
       - name: Install Renovate
         run: |
@@ -70,7 +76,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         
-      # Check GITHUB_TOKEN
-      - name: Check GITHUB_TOKEN
-        run: |
-          curl -H "Authorization: token ${{ secrets.TOKEN }}" https://api.github.com/user
+      # 
