@@ -1,0 +1,11 @@
+<div>
+    <h2>Tasks</h2>
+    <input type="text" ng-model="newtask" placeholder="New Task" />
+    <button class="btn btn-primary" ng-click="addTask()">Add Task</button>
+    <ul class="list-group mt-2">
+        <li class="list-group-item" ng-repeat="task in tasks">
+            {{ task.task }}
+            <button class="btn btn-danger btn-sm float-right" ng-click="removeTask($index)">Delete</button>
+        </li>
+    </ul>
+</div>
