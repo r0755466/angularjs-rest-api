@@ -4,10 +4,10 @@
   "description": "A simple MEAN stack application with AngularJS and Express.js",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node ./backend/server.js",
+    "dev": "nodemon ./backend/server.js",
     "client-install": "cd client && npm install",
-    "client": "cd client && npm start",
+    "client": "cd client && http-server -p 8000",
     "client-build": "cd client && ng build",
     "client-dev": "cd client && ng serve --open"
   },

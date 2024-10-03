@@ -206,15 +206,31 @@ model Task {
 3. Using psql to test it
 
 ```bash
-psql -U postgres
-CREATE DATABASE mydatabase;
+psql -U postgres -d mydatabase
 
-CREATE USER myuser WITH PASSWORD 'mypassword';
-GRANT ALL PRIVILEGES ON DATABASE mydatabase TO myuser;
+-- Check privileges for myuser on public schema
+SELECT
+    nspname AS schema_name,
+    usename AS user_name,
+    has_schema_privilege(usename, nspname, 'USAGE') AS has_usage,
+    has_schema_privilege(usename, nspname, 'CREATE') AS has_create
+FROM
+    pg_catalog.pg_user,
+    pg_catalog.pg_namespace
+WHERE
+    nspname = 'public'
+    AND usename = 'myuser';
+
+-- Grant necessary permissions
+GRANT USAGE ON SCHEMA public TO myuser;
+GRANT CREATE ON SCHEMA public TO myuser;
+
 ```
 ![alt text](image.png)
 
 # Doktorize the project 
+
+...
 
 # Debug commadns used
 
